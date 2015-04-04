@@ -1,0 +1,82 @@
+sync on
+sync rate 70
+hide mouse
+
+load sound "hit.wav",1
+load sound "explode.wav",2
+
+load image "ball.bmp",2
+load image "paddle.bmp",1
+load image "brick.bmp",3
+
+ballsleft=4
+score=0
+collisions=0
+pause=0
+
+paddlex=270
+paddley=240
+
+ballxstart=200
+ballystart=200
+ballxspeed=5
+ballyspeed=ballxspeed
+ballyspeed2=(ballxspeed*-1)
+
+snumb=3
+
+while snumb<63
+for vert=10 to 130 step 30
+	for horiz=15 to 565 step 50
+		sprite snumb,horiz,vert,3
+		snumb=snumb+1
+	next horiz
+next vert
+endwhile
+
+while snumb<123
+for vert=320 to 450 step 30
+	for horiz=15 to 565 step 50
+		sprite snumb,horiz,vert,3
+		snumb=snumb+1
+	next horiz
+next vert
+endwhile
+
+
+repeat
+cls
+
+sprite 1,paddlex,paddley,1
+sprite 2,ballxstart,ballystart,2
+
+if leftkey()=1 then paddlex=paddlex-10
+if rightkey()=1 then paddlex=paddlex+10
+if ballxstart<=0 then ballxspeed=ballxspeed*-1 : play sound 1
+if ballystart<=0 then ballyspeed=ballyspeed*-1 : play sound 1
+if ballxstart>=620 then ballxspeed=ballxspeed*-1 : play sound 1
+if ballystart>=460 then ballyspeed=ballyspeed*-1 : play sound 1
+
+
+ballxstart=ballxstart+ballxspeed
+ballystart=ballystart+ballyspeed
+
+if paddlex<=0 then paddlex=0
+if paddlex>=550 then paddlex=550
+
+rem if sprite hit(1,2)=1 then play sound 1 : ballyspeed=ballyspeed2
+if sprite hit(1,2)=1
+play sound 1
+ballyspeed=ballyspeed*-1
+endif
+
+
+for currentsprite=3 to 122
+  if sprite hit(2,currentsprite)=1 then delete sprite currentsprite : ballyspeed=ballyspeed*-1 : collisions=collisions+1 : play sound 2
+next currentsprite
+
+sync
+until collisions=120
+center text 320,200,"You have won"
+suspend for key
+end
